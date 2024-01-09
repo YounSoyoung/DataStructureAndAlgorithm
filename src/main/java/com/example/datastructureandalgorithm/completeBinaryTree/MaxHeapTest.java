@@ -1,98 +1,89 @@
 package com.example.datastructureandalgorithm.completeBinaryTree;
 
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class MaxHeapTest {
+    private Node root;
+    private Node currentNode;
+    Queue queue = new Queue();
 
-    class Node{
-        int data;
-        Node parent;
-        Node left;
-        Node right;
+    public void createNode(int data) {
+        if(root == null) {
+            root = new Node(data);
+            currentNode = root;
+        }else {
+            Node tempNode = searchNode(root, data);
 
-        public Node(int data){
-            this.data = data;
-        }
-    }
-    Node root = null;
-    int size = 0;
-    Node[] q;
-
-    public MaxHeapTest(int length){
-        q = new Node[length];
-    }
-
-    public boolean insert(int data){
-        Node newNode = new Node(data);
-        if(size == 0){
-            root = newNode;
-            return true;
-        }
-
-
-        q.add(root);
-
-        while(true){
-            Node tmp = q.peek();
-            if(tmp.left == null){
-                tmp.left = newNode;
-                newNode.parent=tmp;
-                break;
-            } else {
-                q.add(tmp.left);
+            //이미 해당 데이터를 가진 노드가 존재하기 때문에 새로 생성 X
+            if(tempNode != null) {
+                return;
             }
 
-            if(tmp.right == null){
-                tmp.right = newNode;
-                newNode.parent=tmp;
-                break;
-            } else {
-                q.add(tmp.right);
+            if(root.left == null) {
+                //maxHeap 과정
+                if(data > root.data) {
+                    int tempData = root.data;
+                    root.data = data;
+                    root.left = new Node(tempData);
+                }else {
+                    root.left = new Node(data);
+                }
+                return;
+            }
+
+            if(currentNode.left == null) {
+//                if(currentNode.right == null) {
+//                    currentNode.right = new Node(data);
+//                }else {
+//                    currentNode.left = new Node(data);
+//                }
+                //maxHeap 과정
+                if(data > currentNode.data) {
+                    int tempData = currentNode.data;
+                    currentNode.data = data;
+                    currentNode.left = new Node(tempData);
+                }else {
+                    currentNode.left = new Node(data);
+                }
+                return;
+            }
+            else if(currentNode.right == null) {
+                //maxHeap
+                if(data > currentNode.data) {
+                    int tempData = currentNode.data;
+                    currentNode.data = data;
+                    currentNode.right = new Node(tempData);
+                }
+                else currentNode.right = new Node(data);
             }
         }
-        return true;
     }
 
-    public void inorder(Node node){
-        if(node != null){
-            inorder(node.left);
-            System.out.print(node.data + ", ");
-            inorder(node.right);
+//    public Node swap(Node node, int childKey){
+//        if(childKey > node.data) {
+//            node.data = childKey;
+//            node.left = new Node(node.data);
+//        }else {
+//            node.left = new Node(childKey);
+//        }
+//        return node;
+//    }
+
+
+    public Node searchNode(Node node, int data) {
+        if(node == null) {
+            return null;
+        }else if(node.data == data) {
+            return node;
+        }else {
+            currentNode = node;
+            searchNode(node.left, data);
+            searchNode(node.right, data);
         }
+        return null;
     }
 
-    public void preOrder(Node node){
-        if(node != null){
-            System.out.print(node.data + ", ");
-            preOrder(node.left);
-            preOrder(node.right);
-        }
-    }
-
-    public void postOrder(Node node){
-        if(node != null){
-            preOrder(node.left);
-            preOrder(node.right);
-            System.out.print(node.data + ", ");
-        }
-    }
-
-    public void levelOrder(Node root){
-        Queue<Node> q = new LinkedList<>();
-        q.add(root);
-
-        while(!q.isEmpty()){
-            Node temp = q.peek();
-            System.out.print(temp.data + ", ");
-            if(temp.left != null){
-                q.add(temp.left);
-            }
-            if(temp.right != null) {
-                q.add(temp.right);
-            }
-            q.poll();
-        }
-
-    }
+    //delete -> root의 데이터와 currentNode의 left 또는 right 값 이용
+    //root의 데이터 반환 후 currentNode의 자식 값을 root.data에 넣기
+    //부모 키와 자식 키 비교 후 maxHeap 만들기
 }
